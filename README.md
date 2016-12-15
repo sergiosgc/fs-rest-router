@@ -94,14 +94,15 @@ The router will set these three variables:
 * `$_SERVER['ROUTER_UNBOUND_REQUEST_URI']`: The part of the URL remaining after removing the path-bound request URI
 * `$_SERVER['ROUTER_PATHBOUND_SCRIPT_FILENAME']`: The script filename obtained from `$_SERVER['ROUTER_PATHBOUND_REQUEST_URI']`
 
-When using beautified URLs, you may extract extra data from the unbound part of the request URL. On the example above, a PUT to `/customer/10` handled by `/srv/www/myapp/customer/put.php` will have `10` the value of `$_SERVER['ROUTER_UNBOUND_REQUEST_URI']`.
+When using beautified URLs, you may extract extra data from the unbound part of the request URL. On the example above, a PUT to `/customer/10` handled by `/srv/www/myapp/customer/put.php` will have `10` as the value of `$_SERVER['ROUTER_UNBOUND_REQUEST_URI']`.
 
 For more complex URLs, you may use regular expressions to extract the parameters. On the same dir as the verb handling php script, drop a regular expression with named groups. Let's imagine the URL `/customer/10/20` is interpreted as customers from minid 10 to maxid 20. Alongside `/srv/www/myapp/customer/get.php` create `/srv/www/myapp/customer/get.regex` with this content:
 ```
-_^(?<minid>[0-9]+)/(?<minid>[0-9]+)$_
+_^(?<minid>[0-9]+)/(?<maxid>[0-9]+)$_
 ```
 
 The request router will use this regex to:
+
 1. Match the unbound request uri and extract arguments minid and maxid. These will populate `$_REQUEST`
 2. Validate that the unbound URI is valid (throw a 404 otherwise)
 
