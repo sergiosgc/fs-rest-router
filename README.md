@@ -1,4 +1,4 @@
-# composer-fs-rest-router
+# rest-router
 Filesystem based request router for HTTP verb-aware applications (RESTful)
 
 ## Objective
