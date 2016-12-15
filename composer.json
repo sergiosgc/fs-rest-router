@@ -4,6 +4,7 @@
     "keywords": ["rest", "router"],
     "homepage": "https://github.com/sergiosgc/composer-fs-rest-router",
     "license": "MIT",
+    "version": "1.0",
     "authors": [
         {
             "name": "Sérgio Carvalho",
