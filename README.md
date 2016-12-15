@@ -104,3 +104,7 @@ _^(?<minid>[0-9]+)/(?<minid>[0-9]+)$_
 The request router will use this regex to:
 1. Match the unbound request uri and extract arguments minid and maxid. These will populate `$_REQUEST`
 2. Validate that the unbound URI is valid (throw a 404 otherwise)
+
+## Workaround for HTML verb limitation
+
+While HTTP defines a rich set of methods, HTML actually allows only GET and POST. To workaround this limitation, in HTML you may use the `x-verb` parameter in any request to override the HTTP verb. For example, the link `/customer/12?x-verb=DELETE`, when clicked in a browser will issue a GET HTTP request, but will be processed as a DELETE request by the router.

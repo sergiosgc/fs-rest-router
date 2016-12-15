@@ -19,7 +19,7 @@ class Rest {
         $server = array();
         $cursorPathboundRequestUri = '/';
         $cursorPathboundScriptFilename = $this->rootPath;
-        if ($this->scriptFile($cursorPathboundScriptFilename, $_SERVER['REQUEST_METHOD'])) {
+        if ($this->scriptFile($cursorPathboundScriptFilename, $this->requestMethod())) {
             $server['ROUTER_PATHBOUND_REQUEST_URI'] = $cursorPathboundRequestUri;
             $server['ROUTER_PATHBOUND_SCRIPT_FILENAME'] = $cursorPathboundScriptFilename;
             $server['ROUTER_UNBOUND_REQUEST_URI'] = implode('/', $parts);
@@ -27,7 +27,7 @@ class Rest {
         while (count($parts) && is_dir($cursorPathboundScriptFilename . '/' . $parts[0])) {
             $cursorPathboundRequestUri .= $parts[0] . '/';
             $cursorPathboundScriptFilename .= '/' . $parts[0];
-            if ($this->scriptFile($cursorPathboundScriptFilename, $_SERVER['REQUEST_METHOD'])) {
+            if ($this->scriptFile($cursorPathboundScriptFilename, $this->requestMethod())) {
                 $server['ROUTER_PATHBOUND_REQUEST_URI'] = $cursorPathboundRequestUri;
                 $server['ROUTER_PATHBOUND_SCRIPT_FILENAME'] = $cursorPathboundScriptFilename;
 		        $server['ROUTER_UNBOUND_REQUEST_URI'] = implode('/', $parts);
@@ -35,7 +35,7 @@ class Rest {
 			array_shift($parts);
         }
         if (!isset($server['ROUTER_PATHBOUND_REQUEST_URI']) || !isset($server['ROUTER_PATHBOUND_SCRIPT_FILENAME'])) throw new Exception_HTTP_404();
-        $scriptFile = $this->scriptFile($server['ROUTER_PATHBOUND_SCRIPT_FILENAME'], $_SERVER['REQUEST_METHOD']);
+        $scriptFile = $this->scriptFile($server['ROUTER_PATHBOUND_SCRIPT_FILENAME'], $this->requestMethod());
         $server['ROUTER_REQUEST'] = array();
         $paramRegexFile = $server['ROUTER_PATHBOUND_SCRIPT_FILENAME'] . '/' . preg_replace('_\.php$_', '.regex', $scriptFile);
         if (!is_file($paramRegexFile)) $paramRegexFile = $server['ROUTER_PATHBOUND_SCRIPT_FILENAME'] . '/all.php';
@@ -50,6 +50,9 @@ class Rest {
         $server['ROUTER_PATHBOUND_SCRIPT_FILENAME'] .= '/' . $scriptFile;
         foreach ($server as $key => $value) $_SERVER[$key] = $value;
         $this->includeScript($server['ROUTER_PATHBOUND_SCRIPT_FILENAME']);
+    }
+    protected function requestMethod() {
+        return isset($_REQUEST['x-verb']) ? $_REQUEST['x-verb'] : $_SERVER['REQUEST_METHOD'];
     }
     protected function includeScript($script) {
         require($script);
