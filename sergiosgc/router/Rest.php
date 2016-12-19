@@ -14,26 +14,22 @@ class Rest {
         if (empty($this->rootPath)) throw new Exception(sprintf("Invalid root path %s", $path));
     }
     public function route() {
-        $parts = array_values(array_filter(explode('/', explode('?', $_SERVER['REQUEST_URI'], 2)[0]), function($p) { return $p != ""; }));
-
         $server = array();
-        $cursorPathboundRequestUri = '/';
-        $cursorPathboundScriptFilename = $this->rootPath;
-        if ($this->scriptFile($cursorPathboundScriptFilename, $this->requestMethod())) {
-            $server['ROUTER_PATHBOUND_REQUEST_URI'] = $cursorPathboundRequestUri;
-            $server['ROUTER_PATHBOUND_SCRIPT_FILENAME'] = $cursorPathboundScriptFilename;
-            $server['ROUTER_UNBOUND_REQUEST_URI'] = implode('/', $parts);
-        }
-        while (count($parts) && is_dir($cursorPathboundScriptFilename . '/' . $parts[0])) {
-            $cursorPathboundRequestUri .= $parts[0] . '/';
-            $cursorPathboundScriptFilename .= '/' . $parts[0];
-            if ($this->scriptFile($cursorPathboundScriptFilename, $this->requestMethod())) {
-                $server['ROUTER_PATHBOUND_REQUEST_URI'] = $cursorPathboundRequestUri;
-                $server['ROUTER_PATHBOUND_SCRIPT_FILENAME'] = $cursorPathboundScriptFilename;
-		        $server['ROUTER_UNBOUND_REQUEST_URI'] = implode('/', $parts);
-            }
-			array_shift($parts);
-        }
+        $parts = array_values(array_filter(explode('/', explode('?', $_SERVER['REQUEST_URI'], 2)[0]), function($p) { return $p != ""; }));
+        $parts[] = null; //dummy
+        $unbound = [];
+        do {
+            array_unshift($unbound, array_pop($parts));
+            $candidate = realpath($this->rootPath . '/' . implode('/', $parts));
+            if ($candidate === false) continue;
+            if (is_null($this->scriptFile($candidate, $this->requestMethod()))) continue;
+            if (strlen($candidate) < strlen($this->rootPath)) continue;
+            $server['ROUTER_PATHBOUND_REQUEST_URI'] = '/' . implode('/', $parts);
+            $server['ROUTER_PATHBOUND_SCRIPT_FILENAME'] = $candidate;
+            array_pop($unbound); // pop dummy
+            $server['ROUTER_UNBOUND_REQUEST_URI'] = implode('/', $unbound);
+        } while (count($parts) && (!isset($server['ROUTER_PATHBOUND_REQUEST_URI']) || !isset($server['ROUTER_PATHBOUND_SCRIPT_FILENAME'])));
+        
         if (!isset($server['ROUTER_PATHBOUND_REQUEST_URI']) || !isset($server['ROUTER_PATHBOUND_SCRIPT_FILENAME'])) throw new Exception_HTTP_404();
         $scriptFile = $this->scriptFile($server['ROUTER_PATHBOUND_SCRIPT_FILENAME'], $this->requestMethod());
         $server['ROUTER_REQUEST'] = array();
