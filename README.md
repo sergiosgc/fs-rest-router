@@ -115,3 +115,13 @@ The most specific script in the path will be used. For example, if these two scr
 ## Workaround for HTML verb limitation
 
 While HTTP defines a rich set of methods, HTML actually allows only GET and POST. To workaround this limitation, in HTML you may use the `x-verb` parameter in any request to override the HTTP verb. For example, the link `/customer/12?x-verb=DELETE`, when clicked in a browser will issue a GET HTTP request, but will be processed as a DELETE request by the router.
+
+## Debugging
+
+You may get a debug of URL matching by the router, instead of a regular response, by enabling the $debug static variable. This may easily be done in the catch-all script referred above, like so:
+```
+<?php
+require_once('vendor/autoload.php');
+\sergiosgc\router\Rest::$debug = true;
+(new \sergiosgc\router\Rest())->route();
+```
