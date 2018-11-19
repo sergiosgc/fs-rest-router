@@ -89,10 +89,11 @@ The most specific script in the path will be used. For example, if these two scr
 
 ## Argument extraction from the URL
 
-The router will set these three variables:
+The router will set these two variables:
 * `$_SERVER['ROUTER_PATHBOUND_REQUEST_URI']`: The part of the URL that matches filesystem directories
-* `$_SERVER['ROUTER_UNBOUND_REQUEST_URI']`: The part of the URL remaining after removing the path-bound request URI
 * `$_SERVER['ROUTER_PATHBOUND_SCRIPT_FILENAME']`: The script filename obtained from `$_SERVER['ROUTER_PATHBOUND_REQUEST_URI']`
+
+$_SERVER['ROUTER_PATHBOUND_REQUEST_URI'] is the result of consuming, from $_SERVER['REQUEST_URI'], the successive matches from regex files found in the matching path. It matches existing directories in the document root.
 
 When using beautified URLs, you may extract extra data from the unbound part of the request URL. On the example above, a PUT to `/customer/10` handled by `/srv/www/myapp/customer/put.php` will have `10` as the value of `$_SERVER['ROUTER_UNBOUND_REQUEST_URI']`.
 
