@@ -81,12 +81,6 @@ Just create directories for your RESTful objects. For example, to handle request
 
 If `head.php` is not present, the router will try to fallback to `get.php`. Any method is accepted; the filename should be the lowercased method name with `.php` appended.
 
-## URL subtrees
-
-A script will automatically handle all requests from that URL tree node down. For example, a script `/srv/www/myapp/customer/order/get.php` will handle both the `/customer/order/` and the `/customer/order/return/` URLs. Namely, it will handle the typical beautified URI `/customer/order/10/` for a RESTful collection plus collection item ID. 
-
-The most specific script in the path will be used. For example, if these two scripts are present: `/srv/www/myapp/customer/order/get.php` and `/srv/www/myapp/customer/get.php`, the URL `/customer/order/return/` will be handled by `/srv/www/myapp/customer/order/get.php`.
-
 ## Argument extraction from the URL
 
 The router will set these two variables:
@@ -99,13 +93,24 @@ When using beautified URLs, you may extract extra data from the unbound part of 
 
 For more complex URLs, you may use regular expressions to extract the parameters. On the same dir as the verb handling php script, drop a regular expression with named groups. Let's imagine the URL `/customer/10/20` is interpreted as customers from minid 10 to maxid 20. Alongside `/srv/www/myapp/customer/get.php` create `/srv/www/myapp/customer/get.regex` with this content:
 ```
-_^(?<minid>[0-9]+)/(?<maxid>[0-9]+)$_
+_^(?<minid>[0-9]+)/(?<maxid>[0-9]+)_
 ```
 
 The request router will use this regex to:
 
 1. Match the unbound request uri and extract arguments minid and maxid. These will populate `$_REQUEST`
 2. Validate that the unbound URI is valid (throw a 404 otherwise)
+
+## URL subtrees
+
+If you wish a script to automatically handle all requests from that URL tree node down, you may do so with a regular expression that consumes the remaining URI. 
+
+For example, a script `/srv/www/myapp/customer/order/get.php` may handle both the `/customer/order/` and the `/customer/order/return/` URLs. To do so, place a regex in `/srv/www/myapp/customer/order/get.regex` with:
+```
+_^(?<remaining>.*)$_
+```
+
+The most specific script in the path will be used. For example, if these two scripts are present: `/srv/www/myapp/customer/order/get.php` and `/srv/www/myapp/customer/get.php`, the URL `/customer/order/return/` will be handled by `/srv/www/myapp/customer/order/get.php`.
 
 ## Workaround for HTML verb limitation
 
