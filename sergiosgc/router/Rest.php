@@ -87,6 +87,9 @@ class Rest {
 
             return [ true, '', $scriptFilename, $localExtractedArguments ];
         }
+        //  - Regex did not consume anything, stop here
+        if (count($remainingUriArray) >= count($uriArray)) return [ false, false, false, [] ];
+
         //  - Regex left unconsumed URI, continue recursively
         if (static::$debug) printf("Recursing on unconsumed URI after regex match<br>\n");
         list($subResult, $pathboundRequestUri, $scriptFilename, $extractedArguments) = $this->_route($verb, $fsPath, $remainingUriArray);
