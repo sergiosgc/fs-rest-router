@@ -43,7 +43,7 @@ class Rest {
             return [ $matches, $matchedUri ];
         }
         if (static::$debug) printf("No regex found for %s on %s<br>\n", $verb, $fsPath);
-        return [ false, '' ];
+        return [ [], '' ];
     }
     public function getScriptFilename($verb, $fsPath) {
         $verb = strtolower($verb);
