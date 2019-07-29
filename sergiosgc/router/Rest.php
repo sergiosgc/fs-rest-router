@@ -49,7 +49,6 @@ class Rest {
         $verb = strtolower($verb);
         $candidates = [
             $fsPath . '/' . $verb . '.php',
-            $fsPath . '/all.regex',
             $fsPath . '/index.php'
         ];
         foreach ($candidates as $scriptFile) if (is_file($scriptFile)) return $scriptFile;
