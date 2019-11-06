@@ -54,36 +54,6 @@ class Rest {
         foreach ($candidates as $scriptFile) if (is_file($scriptFile)) return $scriptFile;
         return false;
     }
-    /*
-    public function _parseMultipartFormData() {
-        if (!isset($_SERVER['CONTENT_TYPE'])) return;
-        if (!preg_match('_^multipart/form-data;.*boundary=(?:"?)(?<boundary>[^ ;]+).*_', $_SERVER['CONTENT_TYPE'], $matches)) return;
-        $boundary = '--' . $matches['boundary'];
-        foreach (array_slice(explode($boundary . "\r\n", file_get_contents('php://input')), 1) as $part) {
-            $lines = explode("\r\n", $part);
-            $i=0;
-            $headers = [];
-            $body = [];
-            while($lines[$i] && 0 == preg_match('_^\s*$_', $lines[$i])) {
-                $headers[] = $lines[$i];
-                $i++;
-            }
-            $i++;
-            while($lines[$i]) {
-                if (FALSE !== strpos($lines[$i], $boundary)) {
-                    $i++;
-                    continue;
-                }
-                $body[] = $lines[$i];
-                $i++;
-            }
-            var_dump($headers, $body);
-        }
-        exit;
-        var_dump($parts); exit;
-        var_dump($_SERVER);
-        var_dump($raw_data); exit;
-    }*/
     public function _parseFormData($verb) {
         if (!isset($_SERVER['CONTENT_TYPE']) || 0 == preg_match('_^application/x-www-form-urlencoded_', $_SERVER['CONTENT_TYPE'])) return;
         $formData = file_get_contents('php://input');
