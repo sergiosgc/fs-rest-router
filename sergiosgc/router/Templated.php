@@ -65,6 +65,15 @@ class Templated {
         // Run output template
         $this->include($compiledTemplate, $result);
     }
+    public function preOutput($uri = null) {
+        list($matchedUri, $args, $scriptFile) = $this->route($uri);
+        $scriptFile = explode('/', $scriptFile);
+        array_pop($scriptFile);
+        array_push($scriptFile, 'index.pre.php');
+        $scriptFile = implode("/", $scriptFile);
+
+        if (file_exists($scriptFile)) $this->include($compiledTemplate, $result);
+    }
     public function route($uri = null) {
         return $this->subrouter->route($uri);
     }
