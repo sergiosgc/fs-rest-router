@@ -72,7 +72,7 @@ class Templated {
         array_push($scriptFile, 'index.pre.php');
         $scriptFile = implode("/", $scriptFile);
 
-        if (file_exists($scriptFile)) $this->include($compiledTemplate, $result);
+        if (file_exists($scriptFile)) $this->include($scriptFile);
     }
     public function route($uri = null) {
         return $this->subrouter->route($uri);
