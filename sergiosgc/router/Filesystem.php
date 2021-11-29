@@ -73,6 +73,13 @@ class Filesystem {
                 $candidate[2] /* script file */
             ];
         }
+        if (!$regexMatched) foreach ($filenames as $filename) if (file_exists($path . '/' . $filename . '.catchall') && file_exists($path . '/' . $filename . '.php')) {
+            return [ 
+                '', /* matched uri */
+                [ 'uri' => implode('/', $uri) ], /* extracted arguments */
+                $path . '/' . $filename . '.php' /* script file */
+            ];
+        }
         if ($debug) printf("No more match mechanisms. Returning false. Unmatched URI at this point: %s\n", implode('/', $uri));
         return false;
     }
